@@ -16,22 +16,20 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  // --- React Query ---
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["movies", searchQuery, currentPage],
     queryFn: () => fetchMovies(searchQuery, currentPage),
-    enabled: !!searchQuery, // запускається лише якщо є запит
-    retry: false, // щоб не дублювався запит при помилці
+    enabled: !!searchQuery,
+    retry: false,
+    placeholderData: (previousData) => previousData,
   });
 
-  // --- Перевірка результатів після отримання даних ---
   useEffect(() => {
     if (data && data.results.length === 0) {
       toast.error("No movies found for your request.");
     }
   }, [data]);
 
-  // --- Обробники ---
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setCurrentPage(1);
